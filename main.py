@@ -7,6 +7,7 @@ Base = declarative_base()
 db = 'postgresql://postgres:admin@localhost:5432/postgres'
 engine = sq.create_engine(db)
 Session = sessionmaker(bind=engine)
+connection = engine.connect()
 
 
 class Album(Base):
@@ -50,6 +51,7 @@ class Song(Base):
     id_song = sq.Column(sq.Integer, primary_key=True)
     song_name = sq.Column(sq.String(50))
     song_length = sq.Column(sq.Time)
+    is_deleted = sq.Column(sq.Boolean)
 
     album_id = sq.Column(sq.Integer, sq.ForeignKey('album.id_album'))
     collection = relationship('Song_Collection')
@@ -80,12 +82,18 @@ class Song_Collection(Base):
 
 session = Session()
 
-# query = session.query(Album)
-a = session.query(Album).filter(Album.release_album_date > '2020-01-01')
-res = a.all()[0]
-print()
-print(res.songs)
-print()
-b = res.songs
-for item in b:
-    print(item.song_name)
+# alter = connection.execute(
+#     """ALTER TABLE song
+#     ADD is_deleted BOOLEAN NOT NULL
+#     DEFAULT False"""
+# )
+
+update = connection.execute(
+    """UPDATE song
+    SET is_deleted = True
+    WHERE id_song > 5"""
+)
+
+# c = Song(id_song=21, album_id=1, song_name='aaa', song_length='00-03-00', is_deleted=False)
+# session.add(c)
+# session.commit()
