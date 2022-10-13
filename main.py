@@ -39,6 +39,11 @@ class Album(Base):
 #     sin_age = sq.Column(sq.Integer)
 
 #     songs = relationship('Song', secondary='singersong')
+class Song_Style(Base):
+    __tableaname__ = 'song_style'
+    id = sq.Column(sq.Integer, primary_key=True)
+    id_song = sq.Column(sq.Integer, sq.ForeignKey('song.id_song'))
+    id_style = sq.Column(sq.Integer, sq.ForeignKey('song.id_style'))
 
 
 class Style(Base):
@@ -46,7 +51,7 @@ class Style(Base):
     id_style = sq.Column(sq.Integer, primary_key=True)
     style_name = sq.Column(sq.String(40))
 
-    songs = relationship('Song', secondary='style_to_song')
+    songs = relationship('Song_Style')
 
 
 class Song(Base):
@@ -56,9 +61,9 @@ class Song(Base):
     song_length = sq.Column(sq.Time)
 
     album_id = sq.Column(sq.Integer, sq.ForeignKey('album.id_album'))
-    collection = relationship('Collection', secondary='collectionsong')
-    singer = relationship('Singer', secondary='singersong')
-    styles = relationship('Style', secondary='style_to_song')
+    # collection = relationship('Collection', secondary='collectionsong')
+    # singer = relationship('Singer', secondary='singersong')
+    styles = relationship('Song_Style')
 
 # Intermediate tables
 
@@ -75,11 +80,11 @@ class Song(Base):
 #     sq.Column('song_id', sq.Integer, sq.ForeignKey('song.id_song')),
 # )
 
-style_to_song = sq.Table(
-    'style_to_song', Base.metadata,
-    sq.Column('style_id', sq.Integer, sq.ForeignKey('style.id_style')),
-    sq.Column('song_id', sq.Integer, sq.ForeignKey('song.id_song')),
-)
+# style_to_song = sq.Table(
+#     'style_to_song', Base.metadata,
+#     sq.Column('style_id', sq.Integer, sq.ForeignKey('style.id_style')),
+#     sq.Column('song_id', sq.Integer, sq.ForeignKey('song.id_song')),
+# )
 
 session = Session()
 
