@@ -7,9 +7,6 @@ Base = declarative_base()
 db = 'postgresql://postgres:admin@localhost:5432/postgres'
 engine = sq.create_engine(db)
 Session = sessionmaker(bind=engine)
-# connection = engine.connect()
-
-# main tables
 
 
 class Album(Base):
@@ -20,30 +17,24 @@ class Album(Base):
     num_of_songs = sq.Column(sq.Integer)
 
     songs = relationship('Song', backref='album')
-    # song_id = sq.Column(sq.Integer, sq.ForeignKey('song.id_song'))
 
 
-# class Collection(Base):
-#     __tablename__ = 'collection'
-#     id_collection = sq.Column(sq.Integer, primary_key=True)
-#     collection_name = sq.Column(sq.String(50))
-#     release_collection_date = sq.Column(sq.Date)
+class Collection(Base):
+    __tablename__ = 'collection'
+    id_collection = sq.Column(sq.Integer, primary_key=True)
+    collection_name = sq.Column(sq.String(50))
+    release_collection_date = sq.Column(sq.Date)
 
-#     songs = relationship('Song', secondary='collectionsong')
+    songs = relationship('Song_Collection')
 
 
-# class Singer(Base):
-#     __tablename__ = 'singer'
-#     nickname = sq.Column(sq.String, primary_key=True)
-#     fsc = sq.Column(sq.String(50))
-#     sin_age = sq.Column(sq.Integer)
+class Singer(Base):
+    __tablename__ = 'singer'
+    nickname = sq.Column(sq.String, primary_key=True)
+    fsc = sq.Column(sq.String(50))
+    sin_age = sq.Column(sq.Integer)
 
-#     songs = relationship('Song', secondary='singersong')
-class Song_Style(Base):
-    __tableaname__ = 'song_style'
-    id = sq.Column(sq.Integer, primary_key=True)
-    id_song = sq.Column(sq.Integer, sq.ForeignKey('song.id_song'))
-    id_style = sq.Column(sq.Integer, sq.ForeignKey('song.id_style'))
+    songs = relationship('Song_Singer')
 
 
 class Style(Base):
@@ -61,30 +52,31 @@ class Song(Base):
     song_length = sq.Column(sq.Time)
 
     album_id = sq.Column(sq.Integer, sq.ForeignKey('album.id_album'))
-    # collection = relationship('Collection', secondary='collectionsong')
-    # singer = relationship('Singer', secondary='singersong')
+    collection = relationship('Song_Collection')
+    singer = relationship('Song_Singer')
     styles = relationship('Song_Style')
 
-# Intermediate tables
+
+class Song_Style(Base):
+    __tablename__ = 'song_style'
+    id = sq.Column(sq.Integer, primary_key=True)
+    id_song = sq.Column(sq.Integer, sq.ForeignKey('song.id_song'))
+    id_style = sq.Column(sq.Integer, sq.ForeignKey('style.id_style'))
 
 
-# collection_to_song = sq.Table(
-#     'collectionsong', Base.metadata,
-#     sq.Column('collection_id', sq.Integer, sq.ForeignKey('collection.id_collection')),
-#     sq.Column('song_id', sq.Integer, sq.ForeignKey('song.id_song')),
-# )
+class Song_Singer(Base):
+    __tablename__ = 'song_singer'
+    id = sq.Column(sq.Integer, primary_key=True)
+    id_song = sq.Column(sq.Integer, sq.ForeignKey('song.id_song'))
+    id_singer = sq.Column(sq.String, sq.ForeignKey('singer.nickname'))
 
-# singer_to_song = sq.Table(
-#     'singersong', Base.metadata,
-#     sq.Column('singer_id', sq.String, sq.ForeignKey('singer.nickname')),
-#     sq.Column('song_id', sq.Integer, sq.ForeignKey('song.id_song')),
-# )
 
-# style_to_song = sq.Table(
-#     'style_to_song', Base.metadata,
-#     sq.Column('style_id', sq.Integer, sq.ForeignKey('style.id_style')),
-#     sq.Column('song_id', sq.Integer, sq.ForeignKey('song.id_song')),
-# )
+class Song_Collection(Base):
+    __tablename__ = 'song_collection'
+    id = sq.Column(sq.Integer, primary_key=True)
+    id_song = sq.Column(sq.Integer, sq.ForeignKey('song.id_song'))
+    id_collection = sq.Column(sq.Integer, sq.ForeignKey('collection.id_collection'))
+
 
 session = Session()
 
