@@ -82,18 +82,23 @@ class Song_Collection(Base):
 
 session = Session()
 
-# alter = connection.execute(
-#     """ALTER TABLE song
-#     ADD is_deleted BOOLEAN NOT NULL
-#     DEFAULT False"""
-# )
 
-update = connection.execute(
-    """UPDATE song
-    SET is_deleted = True
-    WHERE id_song > 5"""
-)
+# create row
 
-# c = Song(id_song=21, album_id=1, song_name='aaa', song_length='00-03-00', is_deleted=False)
-# session.add(c)
+# new_song1 = Song(id_song=21, song_name='aaa', song_length='00:03:00', is_deleted=True)
+# new_song2 = Song(id_song=22, song_name='bbb', song_length='00:03:30', is_deleted=True)
+# session.add_all([new_song1, new_song2])
+# session.commit()
+
+#update row
+
+# update_song = session.query(Song).filter(Song.id_song == 21)
+# record = update_song.one()
+# record.is_deleted = False
+# session.commit()
+# or I could use: record = update(Song).where(Song.id_song == 21).values(is_deleted=False)
+
+# delete row
+
+# deleting_song = session.query(Song).filter(Song.id_song == 22).delete()
 # session.commit()
